@@ -1,14 +1,200 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fractal & Chaos Suite</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Control Panel -->
+        <aside class="control-panel">
+            <header class="app-header">
+                <span class="badge"><i class="fas fa-snowflake"></i> Creative Math</span>
+                <h1>Fractal & Chaos Suite</h1>
+                <p>Explore recursion, complex dynamics, and bitwise noise.</p>
+            </header>
+
+            <!-- Mode Selector -->
+            <div class="control-group">
+                <label for="modeSelect"><i class="fas fa-sliders-h"></i> Select Fractal Mode:</label>
+                <select id="modeSelect" class="form-select">
+                    <option value="bitwise" selected>Bitwise Landscape (Original)</option>
+                    <option value="tree">Recursive Tree (Swaying)</option>
+                    <option value="mandelbrot">Mandelbrot Complex Set</option>
+                    <option value="julia">Julia Dynamic Set</option>
+                </select>
+            </div>
+
+            <!-- Dynamic Controls Section -->
+            <section class="mode-controls">
+                <!-- Bitwise Mode Controls -->
+                <div id="bitwiseControls" class="control-set">
+                    <h3>Bitwise Configuration</h3>
+                    
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Points per Frame:</span>
+                            <span id="bitwisePointsVal" class="slider-val">1000</span>
+                        </div>
+                        <input type="range" id="bitwisePointsSlider" min="200" max="5000" step="100" value="1000">
+                    </div>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Color Intensity:</span>
+                            <span id="bitwiseColorVal" class="slider-val">128</span>
+                        </div>
+                        <input type="range" id="bitwiseColorSlider" min="30" max="255" step="5" value="128">
+                    </div>
+
+                    <div class="control-item">
+                        <label for="bitwiseOp"><i class="fas fa-calculator"></i> Logic Operators:</label>
+                        <select id="bitwiseOp" class="form-select">
+                            <option value="xor_and" selected>P1: (X | Y, X & Y) | P2: (X & Y, X ^ Y)</option>
+                            <option value="xor_or">P1: (X ^ Y, X | Y) | P2: (X & Y, X ^ Y)</option>
+                            <option value="and_or">P1: (X & Y, X | Y)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tree Mode Controls -->
+                <div id="treeControls" class="control-set hidden">
+                    <h3>Recursive Tree Configuration</h3>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Branch Angle:</span>
+                            <span id="treeAngleVal" class="slider-val">30°</span>
+                        </div>
+                        <input type="range" id="treeAngleSlider" min="5" max="90" step="1" value="30">
+                    </div>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Length Scaling:</span>
+                            <span id="treeScaleVal" class="slider-val">0.68</span>
+                        </div>
+                        <input type="range" id="treeScaleSlider" min="0.50" max="0.80" step="0.01" value="0.68">
+                    </div>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Recursion Depth:</span>
+                            <span id="treeDepthVal" class="slider-val">8</span>
+                        </div>
+                        <input type="range" id="treeDepthSlider" min="4" max="11" step="1" value="8">
+                    </div>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Wind Sway Force:</span>
+                            <span id="treeWindVal" class="slider-val">4</span>
+                        </div>
+                        <input type="range" id="treeWindSlider" min="0" max="10" step="1" value="4">
+                    </div>
+                </div>
+
+                <!-- Mandelbrot / Julia Controls -->
+                <div id="complexControls" class="control-set hidden">
+                    <h3>Complex Dynamics Configuration</h3>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Max Iterations:</span>
+                            <span id="iterationsVal" class="slider-val">50</span>
+                        </div>
+                        <input type="range" id="iterationsSlider" min="15" max="150" step="5" value="50">
+                    </div>
+
+                    <div class="slider-item">
+                        <div class="slider-header">
+                            <span>Zoom Level:</span>
+                            <span id="zoomVal" class="slider-val">1.0x</span>
+                        </div>
+                        <input type="range" id="zoomSlider" min="0.5" max="15.0" step="0.5" value="1.0">
+                    </div>
+
+                    <!-- Only displayed for Julia -->
+                    <div id="juliaConstantControls" class="hidden">
+                        <div class="slider-item">
+                            <div class="slider-header">
+                                <span>Real Constant (c_r):</span>
+                                <span id="crVal" class="slider-val">-0.70</span>
+                            </div>
+                            <input type="range" id="crSlider" min="-1.50" max="1.50" step="0.01" value="-0.70">
+                        </div>
+
+                        <div class="slider-item">
+                            <div class="slider-header">
+                                <span>Imag Constant (c_i):</span>
+                                <span id="ciVal" class="slider-val">0.27</span>
+                            </div>
+                            <input type="range" id="ciSlider" min="-1.50" max="1.50" step="0.01" value="0.27">
+                        </div>
+                        
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">
+                            <i class="fas fa-mouse-pointer"></i> Drag mouse on canvas to morph shape!
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label for="colorPalette"><i class="fas fa-palette"></i> Color Palette:</label>
+                        <select id="colorPalette" class="form-select">
+                            <option value="hsl">Smooth HSL Cycle</option>
+                            <option value="fire">Solar Fire (Orange/Yellow)</option>
+                            <option value="neon">Cosmic Neon (Pink/Blue)</option>
+                            <option value="matrix">Matrix Green</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mathematical Information Board -->
+            <section class="math-board">
+                <header class="board-header">
+                    <h4><i class="fas fa-square-root-alt"></i> Mathematical Basis</h4>
+                </header>
+                <div class="board-content">
+                    <div id="bitwiseInfo" class="info-content">
+                        <code>Point₁ = (x | y, x & y)</code><br>
+                        <code>Point₂ = (x & y, x ^ y)</code>
+                        <p>Plotted using coordinates derived from binary operations. Reveals self-similar rectangular grid systems hidden in boolean logic tables.</p>
+                    </div>
+                    <div id="treeInfo" class="info-content hidden">
+                        <code>x_next = x + L · cos(θ)</code><br>
+                        <code>y_next = y - L · sin(θ)</code>
+                        <p>Constructed recursively. At each branch terminus, two sub-branches split. Local Perlin noise simulates natural atmospheric wind gusts.</p>
+                    </div>
+                    <div id="complexInfo" class="info-content hidden">
+                        <code>z_(n+1) = z_n² + c</code>
+                        <p id="complexFormulaText">A set mapped in the complex plane. Mandelbrot checks convergence for c starting at z₀=0. Julia checks convergence for z₀ varying with a static c constant.</p>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Canvas Container -->
+        <main class="canvas-container">
+            <div id="p5-canvas-holder"></div>
+            <!-- Canvas HUD -->
+            <div class="canvas-hud">
+                <span id="canvasStats"><i class="fas fa-tachometer-alt"></i> FPS: -- | Mode: Bitwise</span>
+                <span id="canvasTips">Use sliders to alter the structural math.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- p5.js Libs -->
     <script src="p5.js"></script>
     <script src="p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8">
-
-  </head>
-  <body>
-    <main>
-    </main>
+    <!-- Code -->
     <script src="sketch.js"></script>
-  
-
-</body></html>
+</body>
+</html>
